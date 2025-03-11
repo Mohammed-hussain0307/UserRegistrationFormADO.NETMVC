@@ -1,0 +1,121 @@
+﻿@model UserRegistrationForm.Models.UserModel
+
+@{
+    ViewBag.Title = "Create User";
+}
+
+<h2 class="mb-4">Create User</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card p-4 shadow-sm">
+
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">First Name</label>
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">Last Name</label>
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(model => model.LastName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">Date of Birth</label>
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(model => model.DataOfBirth, new { @class = "form-control", type = "date" })
+                            @Html.ValidationMessageFor(model => model.DataOfBirth, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">Gender</label>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(model => model.Gender, new SelectList(new[] { "Male", "Female", "Other" }), "Select Gender", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">Mobile Number</label>
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(model => model.MobileNumber, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">Email Address</label>
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(model => model.EmailAddress, new { @class = "form-control", type = "email" })
+                            @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">Address</label>
+                        <div class="col-md-9">
+                            @Html.TextAreaFor(model => model.Address, new { @class = "form-control", rows = 3 })
+                            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">City</label>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor(model => model.City, new SelectList(new[] { "Chennai", "Kerala", "Coimbatore" }), "Select city", new { @class = "form-control" })           
+                            @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">State</label>
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(model => model.State, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">Username</label>
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(model => model.UserName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-md-3 col-form-label fw-bold text-end">Password</label>
+                        <div class="col-md-9">
+                            @Html.PasswordFor(model => model.PassWord, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.PassWord, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary px-4">Create</button>
+                        @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary ms-2" })
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
