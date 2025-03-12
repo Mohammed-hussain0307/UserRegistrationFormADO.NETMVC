@@ -1,121 +1,95 @@
-﻿@model UserRegistrationForm.Models.UserModel
+@model IEnumerable<UserRegistrationForm.Models.UserModel>
 
 @{
-    ViewBag.Title = "Create User";
+    ViewBag.Title = "Index";
 }
 
-<h2 class="mb-4">Create User</h2>
+<h2>USER REGISTRATION FORM</h2>
 
-@using (Html.BeginForm())
+@if (TempData["SuccessMessage"] != null)
 {
-    @Html.AntiForgeryToken()
-
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card p-4 shadow-sm">
-
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">First Name</label>
-                        <div class="col-md-9">
-                            @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">Last Name</label>
-                        <div class="col-md-9">
-                            @Html.TextBoxFor(model => model.LastName, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">Date of Birth</label>
-                        <div class="col-md-9">
-                            @Html.TextBoxFor(model => model.DataOfBirth, new { @class = "form-control", type = "date" })
-                            @Html.ValidationMessageFor(model => model.DataOfBirth, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">Gender</label>
-                        <div class="col-md-9">
-                            @Html.DropDownListFor(model => model.Gender, new SelectList(new[] { "Male", "Female", "Other" }), "Select Gender", new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">Mobile Number</label>
-                        <div class="col-md-9">
-                            @Html.TextBoxFor(model => model.MobileNumber, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">Email Address</label>
-                        <div class="col-md-9">
-                            @Html.TextBoxFor(model => model.EmailAddress, new { @class = "form-control", type = "email" })
-                            @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">Address</label>
-                        <div class="col-md-9">
-                            @Html.TextAreaFor(model => model.Address, new { @class = "form-control", rows = 3 })
-                            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">City</label>
-                        <div class="col-md-9">
-                            @Html.DropDownListFor(model => model.City, new SelectList(new[] { "Chennai", "Kerala", "Coimbatore" }), "Select city", new { @class = "form-control" })           
-                            @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">State</label>
-                        <div class="col-md-9">
-                            @Html.TextBoxFor(model => model.State, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">Username</label>
-                        <div class="col-md-9">
-                            @Html.TextBoxFor(model => model.UserName, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label class="col-md-3 col-form-label fw-bold text-end">Password</label>
-                        <div class="col-md-9">
-                            @Html.PasswordFor(model => model.PassWord, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.PassWord, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-primary px-4">Create</button>
-                        @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary ms-2" })
-                    </div>
-
-                </div>
-            </div>
-        </div>
+    <div class="alert alert-success">
+        <strong>Success !</strong> @TempData["SuccessMessage"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+else if (TempData["Updated"] != null)
+{
+    <div class="alert alert-danger">
+        <strong>Update !</strong> @TempData["Updated"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span>&times;</span>
+        </button>
+    </div>
+}
+else if (TempData["Failed"] != null)
+{
+    <div class="alert alert-danger">
+        <strong>Failed !</strong> @TempData["Failed"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span>&times;</span>
+        </button>
+    </div>
+}
+else if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        <strong>Error !</strong> @TempData["ErrorMessage"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span>&times;</span>
+        </button>
     </div>
 }
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+<p>
+    @Html.ActionLink("Create New", "Create", "User", new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MobileNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EmailAddress)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserName)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MobileNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmailAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-warning" }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-success" }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+            </td>
+        </tr>
+    }
+
+</table>
