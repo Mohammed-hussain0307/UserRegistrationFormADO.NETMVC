@@ -1,10 +1,10 @@
-﻿@model IEnumerable<UserRegistrationForm.Models.UserModel>
+@model IEnumerable<UserRegistrationForm.Models.UserModel>
 
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>USER REGISTRATION FORM</h2>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -44,7 +44,7 @@ else if (TempData["ErrorMessage"] != null)
 }
 
 <p>
-    @Html.ActionLink("Create New", "Create", "User", new { @class = "btn btn-outline-primary" })
+    @Html.ActionLink("Create New", "Create", "User", new { @class = "btn btn-primary" })
 </p>
 <table class="table">
     <tr>
