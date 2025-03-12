@@ -1,167 +1,176 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using UserRegistrationForm.Models;
+using UserRegistrationForm.Repository;
 
-namespace UserRegistrationForm.Repository
+namespace UserRegistrationForm.Controllers
 {
-	public class UserRepository
-	{
-		private SqlConnection sqlConnection;
-		List<UserModel> userModels = new List<UserModel>();
-		public UserRepository()
-		{
-			string connection = ConfigurationManager.ConnectionStrings["connectionString"].ToString();
-			sqlConnection = new SqlConnection(connection);
-		}
-		public List<UserModel> GetUsers()
-		{
-			using (sqlConnection)
-			{
-				SqlCommand sqlCommand = sqlConnection.CreateCommand();
-				sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
-				sqlCommand.CommandText = "sp_GetAllUsers";
-				SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-				DataTable dataTable = new DataTable();
+    public class UserController : Controller
+    {
+        UserRepository userRepository = new UserRepository();
 
-				sqlConnection.Open();
-				sqlDataAdapter.Fill(dataTable);
-				sqlConnection.Close();
+        //Get the All UserDetails
+        public ActionResult Index()
+        {
+            return View(userRepository.GetUsers());
+        }
 
-				foreach(DataRow dataRow in dataTable.Rows)
-				{
-					userModels.Add(new UserModel
-					{
-						Id = Convert.ToInt32(dataRow["id"]),
-						FirstName = dataRow["first_name"].ToString(),
-						LastName = dataRow["last_name"].ToString(),
-						DataOfBirth = dataRow["date_of_birth"].ToString(),
-						Gender = dataRow["gender"].ToString(),
-						MobileNumber = dataRow["phone_number"].ToString(),
-						EmailAddress = dataRow["email_address"].ToString(),
-						Address = dataRow["address"].ToString(),
-						City = dataRow["city"].ToString(),
-						State = dataRow["state"].ToString(),
-						UserName = dataRow["user_name"].ToString(),
-						PassWord = dataRow["password"].ToString()
-					});
+        
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        //Create user detail
+        [HttpPost]
+        public ActionResult Create(UserModel userModel)
+        {
+            bool addUser = false;
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    addUser = userRepository.CreateUser(userModel);
+
+                    if (addUser)
+                    {
+                        TempData["SuccessMessage"] = "User detail added successfully";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Cant add the user detail";
+                    }
+                    return RedirectToAction("Index");
                 }
-				return userModels;
             }
-		}
-
-		public bool CreateUser(UserModel userModel)
-		{
-			int check = 0;
-
-			using (sqlConnection)
-			{
-				SqlCommand sqlCommand = new SqlCommand("sp_InsertUser", sqlConnection);
-				sqlCommand.CommandType = CommandType.StoredProcedure;
-				sqlCommand.Parameters.AddWithValue("@FirstName", userModel.FirstName);
-				sqlCommand.Parameters.AddWithValue("@LastName", userModel.LastName);
-				sqlCommand.Parameters.AddWithValue("@DateOfBirth", userModel.DataOfBirth);
-				sqlCommand.Parameters.AddWithValue("@Gender", userModel.Gender);
-				sqlCommand.Parameters.AddWithValue("@PhoneNumber", userModel.MobileNumber);
-				sqlCommand.Parameters.AddWithValue("@EmailAddress", userModel.EmailAddress);
-				sqlCommand.Parameters.AddWithValue("@Address", userModel.Address);
-				sqlCommand.Parameters.AddWithValue("@City", userModel.City);
-				sqlCommand.Parameters.AddWithValue("@State", userModel.State);
-				sqlCommand.Parameters.AddWithValue("@UserName", userModel.UserName);
-				sqlCommand.Parameters.AddWithValue("@Password", userModel.PassWord);
-
-				sqlConnection.Open();
-				check = sqlCommand.ExecuteNonQuery();
-				sqlConnection.Close();
-			}
-			return check > 0;
-		}
-
-		//Get user by ID
-		public List<UserModel> GetUserById(int id)
-		{
-			using (sqlConnection)
-			{
-				SqlCommand sqlCommand = sqlConnection.CreateCommand();
-				sqlCommand.CommandType = CommandType.StoredProcedure;
-				sqlCommand.CommandText = "sp_GetUserById";
-				sqlCommand.Parameters.AddWithValue("@Id", id);
-				SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
-				DataTable dataTable = new DataTable();
-
-				sqlConnection.Open();
-				sqlDataAdapter.Fill(dataTable);
-				sqlConnection.Close();
-
-				foreach(DataRow dataRow in dataTable.Rows)
-				{
-					userModels.Add(new UserModel
-					{
-						FirstName = dataRow["first_name"].ToString(),
-						LastName = dataRow["last_name"].ToString(),
-                        DataOfBirth = dataRow["date_of_birth"].ToString(),
-                        Gender = dataRow["gender"].ToString(),
-                        MobileNumber = dataRow["phone_number"].ToString(),
-                        EmailAddress = dataRow["email_address"].ToString(),
-                        Address = dataRow["address"].ToString(),
-                        City = dataRow["city"].ToString(),
-                        State = dataRow["state"].ToString(),
-                        UserName = dataRow["user_name"].ToString(),
-                        PassWord = dataRow["password"].ToString()
-                    });
-				}
+            catch(Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
             }
-			return userModels;
-		}
+            return View();
+        }
 
-		public bool UpdateUser(UserModel userModel)
-		{
-			int check = 0;
+        //Get user by ID
+        public ActionResult Details(int id)
+        {
+            try
+            {
+                var user = userRepository.GetUserById(id).FirstOrDefault();
 
-			using (sqlConnection)
-			{
-				SqlCommand sqlCommand = new SqlCommand("sp_UpdateUser", sqlConnection);
-				sqlCommand.CommandType = CommandType.StoredProcedure;
-				sqlCommand.Parameters.AddWithValue("@Id", userModel.Id);
-                sqlCommand.Parameters.AddWithValue("@FirstName", userModel.FirstName);
-                sqlCommand.Parameters.AddWithValue("@LastName", userModel.LastName);
-                sqlCommand.Parameters.AddWithValue("@DateOfBirth", userModel.DataOfBirth);
-                sqlCommand.Parameters.AddWithValue("@Gender", userModel.Gender);
-                sqlCommand.Parameters.AddWithValue("@PhoneNumber", userModel.MobileNumber);
-                sqlCommand.Parameters.AddWithValue("@EmailAddress", userModel.EmailAddress);
-                sqlCommand.Parameters.AddWithValue("@Address", userModel.Address);
-                sqlCommand.Parameters.AddWithValue("@City", userModel.City);
-                sqlCommand.Parameters.AddWithValue("@State", userModel.State);
-                sqlCommand.Parameters.AddWithValue("@UserName", userModel.UserName);
-                sqlCommand.Parameters.AddWithValue("@Password", userModel.PassWord);
-
-				sqlConnection.Open();
-				check = sqlCommand.ExecuteNonQuery();
-				sqlConnection.Close();
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User details not available with the employee Id : " + id;
+                    return RedirectToAction("Index");
+                }
+                return View(user);
             }
-			return check > 0;
-		}
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return View();
+            }
+        }
 
-		//Delete user detail
-		public bool DeleteUser(int id)
-		{
-			int check = 0;
+        //Get user for update
+        public ActionResult Edit(int id)
+        {
+            try
+            {
+                var user = userRepository.GetUserById(id).FirstOrDefault();
 
-			using (sqlConnection)
-			{
-				SqlCommand sqlCommand = new SqlCommand("sp_DeleteUser", sqlConnection);
-				sqlCommand.CommandType = CommandType.StoredProcedure;
-				sqlCommand.Parameters.AddWithValue("@Id", id);
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User details not available with the employee Id : " + id;
+                    return RedirectToAction("Index");
+                }
+                return View(user);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return View();
+            }
+        }
 
-				sqlConnection.Open();
-				check = sqlCommand.ExecuteNonQuery();
-				sqlConnection.Close();
-			}
-			return check > 0;
-		}
-	}
+        //update user detail
+        [HttpPost]
+        public ActionResult Edit(UserModel userModel)
+        {
+            bool isUpdate = false;
+
+            try
+            {
+                isUpdate = userRepository.UpdateUser(userModel);
+
+                if(isUpdate)
+                {
+                    TempData["SuccessMessage"] = "User detail successfully updated";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Cant update the user details";
+                }
+            }
+            catch(Exception ex)
+            {
+                TempData["ErroeMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+
+        // GET: User for Delete
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                var user = userRepository.GetUserById(id).FirstOrDefault();
+
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User details not available with the employee Id : " + id;
+                    return RedirectToAction("Index");
+                }
+                return View(user);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return View();
+            }
+        }
+
+        //Delete user
+        [HttpPost]
+        public ActionResult Delete(int id, FormCollection formCollection)
+        {
+            bool isDelete = false;
+
+            try
+            {
+                isDelete = userRepository.DeleteUser(id);
+
+                if (isDelete)
+                {
+                    TempData["SuccessMessage"] = "User detail successfully Deleted";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "user detail cant be deleted";
+                }
+            }
+            catch(Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return View();
+            }
+            return View();
+        }
+    }
 }
